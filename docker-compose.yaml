@@ -1,0 +1,28 @@
+version: "3.0"
+services:
+  db:
+    container_name: "db_app_postgresql"
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+
+  test_app:
+    build:
+      context: .
+    env_file:
+      - .env.example
+    container_name: "test_app_drf"
+    command:  >
+      sh -c "sleep 2s
+      && alembic upgrade head
+      && sleep 2s
+      && python db_filling_script.py
+      && sleep 2s
+      && gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000"
+    ports:
+      - 8000:8000
+    depends_on:
+      - db

@@ -1,0 +1,12 @@
+version: "3.0"
+services:
+  db_test:
+    container_name: "db_for_tests"
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres_test
+      - POSTGRES_PASSWORD=postgres_test
+      - POSTGRES_DB=postgres_test
+    ports:
+      - "5632:5432"
